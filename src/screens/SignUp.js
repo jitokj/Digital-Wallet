@@ -35,7 +35,11 @@ const SignUp = () => {
             style={{ width: 20, height: 20, tintColor: COLORS.white }}
           />
           <Text
-            style={{ marginLeft: SIZES.padding * 1.5, color: COLORS.white }}
+            style={{
+              marginLeft: SIZES.padding * 1.5,
+              color: COLORS.white,
+              ...FONTS.h1,
+            }}
           >
             SignUp
           </Text>
