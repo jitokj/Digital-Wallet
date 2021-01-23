@@ -143,6 +143,25 @@ const SignUp = () => {
     );
   };
 
+  const renderButton = () => {
+    return (
+      <View style={{ margin: SIZES.padding * 3 }}>
+        <TouchableOpacity
+          style={{
+            height: 60,
+            backgroundColor: COLORS.black,
+            borderRadius: SIZES.radius / 1.5,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onPress={() => console.log("Navigate to Home")}
+        >
+          <Text style={{ color: COLORS.white, ...FONTS.h3 }}>Continue</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : null}
@@ -156,6 +175,7 @@ const SignUp = () => {
           {renderHeader()}
           {renderLogo()}
           {renderForm()}
+          {renderButton()}
         </ScrollView>
       </LinearGradient>
     </KeyboardAvoidingView>
