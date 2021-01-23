@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -19,6 +19,33 @@ import { LinearGradient } from "expo-linear-gradient";
 import { icons, images, theme, COLORS, SIZES, FONTS } from "../constants/index";
 
 const SignUp = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [areas, setAreas] = useState([]);
+  const [selectedArea, setSelectedArea] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    fetch("https://restcountries.eu/rest/v2/all")
+      .then((response) => response.json())
+      .then((data) => {
+        let areaData = data.map((item) => {
+          return {
+            code: item.alpha2Code,
+            name: item.name,
+            callingCode: `+${item.callingCodes[0]}`,
+            flag: `https://www.countryflags.io/${item.alpha2Code}/flat/64.png`,
+          };
+        });
+        setAreas(areaData);
+        if (areaData.length > 0) {
+          let defaultData = areaData.filter((a) => a.code == "US");
+          if (defaultData.length > 0) {
+            setSelectedArea(defaultData[0]);
+          }
+        }
+      });
+  });
+
   const renderHeader = () => {
     return (
       <TouchableOpacity
@@ -76,14 +103,14 @@ const SignUp = () => {
               </View>
               <View style={{ justifyContent: "center", marginLeft: 5 }}>
                 <Image
-                  source={images.usFlag}
+                  source={{ uri: selectedArea?.flag }}
                   resizeMode="contain"
                   style={{ width: 30, height: 30 }}
                 />
               </View>
               <View style={{ justifyContent: "center", marginLeft: 5 }}>
                 <Text style={{ color: COLORS.white, ...FONTS.body3 }}>
-                  US+1
+                  {selectedArea?.callingCode}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -105,7 +132,7 @@ const SignUp = () => {
         </View>
 
         {/* password */}
-        <View style={{ marginTop: SIZES.padding * 2 }}>
+        <View style={{ marginTop: SIZES.padding * 1.5 }}>
           <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>
             Password
           </Text>
@@ -114,14 +141,14 @@ const SignUp = () => {
               marginVertical: SIZES.padding,
               borderBottomColor: COLORS.white,
               borderBottomWidth: 1,
-              height: 40,
+              height: 30,
               color: COLORS.white,
               ...FONTS.body3,
             }}
             placeholderTextColor={COLORS.white}
             placeholder="Enter Password"
             selectionColor={COLORS.white}
-            secureTextEntry={true}
+            secureTextEntry={!showPassword}
           />
           <TouchableOpacity
             style={{
@@ -131,10 +158,10 @@ const SignUp = () => {
               height: 30,
               width: 30,
             }}
-            onPress={() => console.log("Toggle")}
+            onPress={() => setShowPassword(!showPassword)}
           >
             <Image
-              source={icons.eye}
+              source={showPassword ? icons.disable_eye : icons.eye}
               style={{ height: 20, width: 20, tintColor: COLORS.white }}
             />
           </TouchableOpacity>
@@ -164,8 +191,8 @@ const SignUp = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : null}
-      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1, flexDirection: "column" }}
     >
       <LinearGradient
         colors={[COLORS.lime, COLORS.emerald]}
@@ -186,7 +213,7 @@ const styles = StyleSheet.create({
   backButton: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: SIZES.padding * 6,
+    marginTop: SIZES.padding * 3,
     paddingHorizontal: SIZES.padding * 2,
   },
   backButtonImage: { width: 20, height: 20, tintColor: COLORS.white },
@@ -196,7 +223,7 @@ const styles = StyleSheet.create({
     ...FONTS.h1,
   },
   logoContainer: {
-    marginTop: SIZES.padding * 5,
+    marginTop: SIZES.padding * 3,
     height: 100,
     alignItems: "center",
     justifyContent: "center",
